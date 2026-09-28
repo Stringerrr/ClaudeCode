@@ -80,6 +80,25 @@ expand_path() { case "$1" in "~"/*) printf '%s\n' "$HOME/${1#"~/"}" ;; *) printf
 
 # ---------- SSH ----------
 node_key()    { expand_path "${SSH_KEY:-$(inv_get ssh_key)}"; }
+
+# У ноды может быть свой ключ (поле ssh_key рядом с ip). env SSH_KEY перебивает всё.
+key_for_ip() {
+  local ip="$1" k=""
+  [ -n "${SSH_KEY:-}" ] && { expand_path "$SSH_KEY"; return; }
+  if command -v jq >/dev/null 2>&1; then
+    k="$(jq -r --arg ip "$ip" '.nodes[] | select(.ip == $ip) | .ssh_key // empty' "$INVENTORY")"
+  elif command -v python3 >/dev/null 2>&1; then
+    k="$(python3 -c '
+import json, sys
+inv, ip = sys.argv[1], sys.argv[2]
+for n in json.load(open(inv))["nodes"]:
+    if n["ip"] == ip and n.get("ssh_key"):
+        print(n["ssh_key"])
+        break
+' "$INVENTORY" "$ip")"
+  fi
+  if [ -n "$k" ]; then expand_path "$k"; else node_key; fi
+}
 monitor_key() { expand_path "${MONITOR_SSH_KEY:-$(inv_get monitor.ssh_key)}"; }
 
 ssh_opts() {
@@ -90,7 +109,7 @@ ssh_opts() {
 # ssh_node <ip> <команда...>
 ssh_node() {
   local ip="$1"; shift
-  local key opts=(); key="$(node_key)"
+  local key opts=(); key="$(key_for_ip "$ip")"
   [ -f "$key" ] || die "нет SSH-ключа нод: $key"
   while IFS= read -r o; do opts+=("$o"); done < <(ssh_opts "$key")
   ssh "${opts[@]}" "root@$ip" "$@"

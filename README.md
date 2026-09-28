@@ -38,9 +38,11 @@ scripts/healthcheck.sh de fl --raw
 scripts/crowdsec-allowlist.sh --from-monitor          # только посмотреть
 scripts/crowdsec-allowlist.sh --from-monitor --apply  # раскатать и записать в inventory
 
-# новая нода (юзер дал IP + root-пароль + страну + домен)
+# новая нода (юзер дал IP + root-пароль или ключ + страну + домен)
 scripts/setup-node.sh --id de-3 --ip 1.2.3.4 --domain de-3.proxy025.ru \
                       --country "🇩🇪 Германия 3" --hosting hostes --password 'rootpw'
+# если у ноды свой SSH-ключ, а не общий 025key — он же запишется в inventory рядом с нодой:
+scripts/setup-node.sh --id xx --ip 1.2.3.4 --domain xx.proxy025.ru --key ~/keys/xx_ed25519
 
 # ёмкость канала для бара «СЕТЬ» (§9.3)
 scripts/capacity-measure.sh --show

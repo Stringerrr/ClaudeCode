@@ -5,7 +5,9 @@
 #
 #   scripts/setup-node.sh --id de-3 --ip 1.2.3.4 --domain de-3.proxy025.ru \
 #                         --country "🇩🇪 Германия 3" [--hosting hostes] [--password 'rootpw'] \
-#                         [--skip-upgrade] [--skip-le] [--no-inventory]
+#                         [--key ~/keys/id_ed25519] [--skip-upgrade] [--skip-le] [--no-inventory]
+#
+# --key — если у ноды свой SSH-ключ, а не общий 025key; он запишется в inventory рядом с нодой.
 #
 # SECRET_KEY берётся из env NODE_SECRET_KEY или из secrets/node-secret-key.txt (в git не хранится).
 set -uo pipefail
@@ -21,10 +23,11 @@ while [ $# -gt 0 ]; do
     --country) COUNTRY="$2"; shift ;;
     --hosting) HOSTING="$2"; shift ;;
     --password) PASSWORD="$2"; shift ;;
+    --key) SSH_KEY="$(expand_path "$2")"; export SSH_KEY; shift ;;
     --skip-upgrade) SKIP_UPGRADE=1 ;;
     --skip-le) SKIP_LE=1 ;;
     --no-inventory) ADD_INV=0 ;;
-    -h|--help) sed -n '2,10p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
     *) die "неизвестный аргумент: $1" ;;
   esac
   shift
@@ -95,17 +98,19 @@ esac
 
 # --- 4. inventory ---
 if [ $ADD_INV -eq 1 ]; then
-  python3 - "$INVENTORY" "$ID" "$COUNTRY" "$IP" "$DOMAIN" "$HOSTING" <<'PY'
+  python3 - "$INVENTORY" "$ID" "$COUNTRY" "$IP" "$DOMAIN" "$HOSTING" "${SSH_KEY:-}" <<'PY'
 import json, sys
-path, nid, country, ip, domain, hosting = sys.argv[1:7]
+path, nid, country, ip, domain, hosting, key = sys.argv[1:8]
 d = json.load(open(path))
+entry = {"country": country, "ip": ip, "domain": domain, "hosting": hosting, "monitored": True}
+if key:
+    entry["ssh_key"] = key
 for n in d["nodes"]:
     if n["id"] == nid:
-        n.update({"country": country, "ip": ip, "domain": domain, "hosting": hosting, "monitored": True})
+        n.update(entry)
         break
 else:
-    d["nodes"].append({"id": nid, "country": country, "ip": ip, "domain": domain,
-                       "hostname": "", "hosting": hosting, "monitored": True})
+    d["nodes"].append(dict({"id": nid, "hostname": ""}, **entry))
 json.dump(d, open(path, "w"), ensure_ascii=False, indent=2)
 open(path, "a").write("\n")
 PY
