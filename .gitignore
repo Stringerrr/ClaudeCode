@@ -1,0 +1,9 @@
+# секреты — в git не хранятся
+secrets/*
+!secrets/README.md
+!secrets/*.example
+# ключи
+keys/
+*.pem
+*_ed25519
+*.key

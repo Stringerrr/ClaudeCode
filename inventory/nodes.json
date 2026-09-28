@@ -1,0 +1,107 @@
+{
+  "cluster": "proxy025",
+  "panel": "panel.025vpn.ru",
+  "ssh_key": "~/Desktop/ClaudeCode/keys/025key",
+  "le_email": "valeron2003k@gmail.com",
+  "monitor": {
+    "host": "monitor.avoro.dev-agent.ru",
+    "ip": "185.229.207.147",
+    "dashboard": "https://monitor.avoro.dev-agent.ru:8443",
+    "ssh_key": "~/Desktop/ClaudeCode/keys/hzhex_ed25519",
+    "app_dir": "/opt/epyc-monitor",
+    "service": "epyc-monitor",
+    "nodes_file": "/opt/epyc-monitor/p025_nodes.json",
+    "capacity_file": "/opt/epyc-monitor/capacity.json",
+    "api": "http://127.0.0.1:8090/api/metrics",
+    "egress_cidrs": [
+      "194.48.217.128/28"
+    ],
+    "egress_ip": "194.48.217.130",
+    "egress_verified": false,
+    "notes": "IP 185.229.207.147 получен резолвом monitor.avoro.dev-agent.ru 2026-09-28; входит в блок 185.229.207.144/28 (переезд 25.09). egress_cidrs — СТАРЫЙ egress (194.48.217.130); актуальный снять `curl -s ifconfig.me` с самого монитора и положить сюда, см. scripts/crowdsec-allowlist.sh"
+  },
+  "nodes": [
+    {
+      "id": "de",
+      "country": "🇩🇪 Германия (Hostes)",
+      "ip": "151.242.161.154",
+      "domain": "de.proxy025.ru",
+      "hostname": "025-node-germ.hostes.io",
+      "hosting": "hostes",
+      "monitored": true
+    },
+    {
+      "id": "de-2",
+      "country": "🇩🇪 Германия 2 (Hostes)",
+      "ip": "151.242.161.216",
+      "domain": "de-2.proxy025.ru",
+      "hostname": "025-node-germ-2.hostes.io",
+      "hosting": "hostes",
+      "monitored": true
+    },
+    {
+      "id": "jp",
+      "country": "🇯🇵 Япония",
+      "ip": "31.76.91.243",
+      "domain": "jp.proxy025.ru",
+      "hostname": "",
+      "hosting": "",
+      "monitored": true
+    },
+    {
+      "id": "it",
+      "country": "🇮🇹 Италия",
+      "ip": "31.77.154.126",
+      "domain": "it.proxy025.ru",
+      "hostname": "",
+      "hosting": "",
+      "monitored": true
+    },
+    {
+      "id": "fl",
+      "country": "🇫🇮 Финляндия",
+      "ip": "13.143.173.228",
+      "domain": "fl.proxy025.ru",
+      "hostname": "025-node-FINLAND.play2go.cloud",
+      "hosting": "play2go",
+      "monitored": true
+    },
+    {
+      "id": "pl",
+      "country": "🇵🇱 Польша (Hostes)",
+      "ip": "31.56.188.71",
+      "domain": "pl.proxy025.ru",
+      "hostname": "025-node-poland.hostes.io",
+      "hosting": "hostes",
+      "monitored": true
+    },
+    {
+      "id": "pl-2",
+      "country": "🇵🇱 Польша 2 (Hostes)",
+      "ip": "31.59.125.208",
+      "domain": "pl-2.proxy025.ru",
+      "hostname": "025-node-poland-2.hostes.io",
+      "hosting": "hostes",
+      "monitored": true
+    },
+    {
+      "id": "nl",
+      "country": "🇳🇱 Нидерланды",
+      "ip": "31.77.149.191",
+      "domain": "nl.proxy025.ru",
+      "hostname": "V-VPN-NETHERLANDS.play2go.cloud",
+      "hosting": "play2go",
+      "monitored": true
+    },
+    {
+      "id": "se",
+      "country": "🇸🇪 Швеция",
+      "ip": "177.3.215.207",
+      "domain": "se.proxy025.ru",
+      "hostname": "025-NODE-SWEEDEN.play2go.cloud",
+      "hosting": "play2go",
+      "monitored": false,
+      "note": "снята из p025_nodes.json 17.09 по просьбе юзера; сервер жив"
+    }
+  ]
+}
